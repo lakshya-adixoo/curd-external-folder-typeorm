@@ -19,34 +19,30 @@ dataSource.initialize()
     .catch((error) => console.log("Error connecting to database:", error));
 
 
-
-
-app.get("/newendpoint" , async (req:Request,res:Response): Promise<any> => {
+app.get("/newendpoint" , async(req:Request , res:Response):Promise<any> =>{
 
   try{
 
-    //  await dataSource.initialize();
     const userRepository = dataSource.getRepository(User);
-    const users = await userRepository.find();
+    const findUser = await userRepository.find()
 
+    if(!findUser){
+      console.log("Database is empty");
+      return res.status(200).json({
+        success:true,
+        message:"Database is empty"
+      })
+    }
+ return res.status(200).json(findUser)
 
-    return res.status(200).json({
-      success:true,
-      message:users
-    })
-
-
-  } catch(err){
-
+  }catch(err){
     console.log(err);
     return res.status(500).json({
       success:true,
-      message:"Internal Server error"
+      message:"Internal Server Error"
     })
-
   }
 })
-
 
 
 app.post("/addoutuser" , async(req:Request , res:Response) : Promise<any> => {
@@ -174,6 +170,11 @@ app.delete("/deletefromout/:id" , async(req:Request , res:Response) : Promise<an
     })
   }
 })
+
+
+
+
+
 
 
 app.listen(3000, () => console.log("Server running on port 3000"));
